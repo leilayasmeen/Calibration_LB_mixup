@@ -1,4 +1,6 @@
-# Calibration_LB_mixup
+## About this repository
+
+This repository contains the code needed to run the experiments in "The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation".
 
 ## Creating mixed examples with different types of interpolations
 **To create mixed-label augmentation sets of fixed sizes using SLI, Slerp, and mixup, type:**
@@ -60,9 +62,24 @@ This file trains a 3-pixel receptive field PixelCNN on CIFAR-10 by default. The 
 
 These two files, and the backup files they draw on (contained in the utility folder), were obtained from Kangsepp (2018b) and adjusted as needed for this paper. They calculates ECE, MCE, error, and cross-entropy loss given the logit vectors for a set of neural networks. Thus, each neural network of interest must be evaluated using the "evaluations" files prior to running these files.
 
+**Citation**
 
+If you use this method or this code in your study, please cite it using:
 
+`@misc{
+leila2018nncalibrationmixedlabels,
+title={The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation},
+author={Leila Islam,
+url={https://github.com/leilayasmeen/Calibration_LB_mixup},
+}`
 
+**Requirements**
 
+* Python version 2.7
+* Tensorflow Version 1.5, 1.7, or 1.8
+
+**Acknowledgements**
+
+The *mixup* implementation is adapted from [yu4u](https://github.com/yu4u/mixup-generator); the PixelVAE training code is adapted from [igul222](https://github.com/igul222/PixelVAE); and the neural network training, evaluation, and calibration scripts are derived from [markus93](https://github.com/markus93/NN_calibration).
 
 
