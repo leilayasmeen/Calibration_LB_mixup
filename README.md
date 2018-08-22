@@ -36,9 +36,7 @@ CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_mixup_model.py
 
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_mixup_model.py
 ```
-The *mixup* files above draws on *mixup_generator.py* to generate mixed examples within every training batch. This file was adjusted based on the implementation by [yu4u](https://github.com/yu4u/mixup-generator).
-
-These three files should to be adjusted to run on the weights for the ResNet-110(s) of interest. Comments in the code have indicated where the adjustments need to be made.
+The *mixup* files above draws on *mixup_generator.py* to generate mixed examples within every training batch. This file was adjusted based on the implementation by [yu4u](https://github.com/yu4u/mixup-generator). These three files should to be adjusted to run on the weights for the ResNet-110(s) of interest. Comments in the code have indicated where the adjustments need to be made.
 
 ## Training a PixelVAE to use for *Latent Blending*
 **To train a PixelVAE using the architecture described in the paper, type:**
