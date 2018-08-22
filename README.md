@@ -77,6 +77,6 @@ url={https://github.com/leilayasmeen/Calibration_LB_mixup},
 
 **Acknowledgements**
 
-The *mixup* implementation is adapted from [yu4u](https://github.com/yu4u/mixup-generator); the PixelVAE training code is adapted from [igul222](https://github.com/igul222/PixelVAE); and the neural network training, evaluation, and calibration scripts are derived from [markus93](https://github.com/markus93/NN_calibration).
+The *mixup* implementation is adapted from [yu4u](https://github.com/yu4u/mixup-generator); the PixelVAE training code is adapted from [igul222](https://github.com/igul222/PixelVAE); and the neural network training, evaluation, and calibration scripts from [markus93](https://github.com/markus93/NN_calibration).
 
 
