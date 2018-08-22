@@ -1,9 +1,10 @@
 
 """
-This file creates interpolations using Latent Blending and mixup. Before using this 
-file, use train_pixelvae_cifar10.py to train a PixelVAE on CIFAR-10. 
-This file is currently set to run for CIFAR-10; however, the lines which need
-to be adjusted in order to run this file on another dataset are indicated.
+This file creates SLI and Slerp interpolations using Latent Blending, as well
+as interpolations using mixup. Before using this file, use train_pixelvae_cifar10.py 
+to train a PixelVAE on CIFAR-10. This file is currently set to run for CIFAR-10; 
+however, the lines which need to be adjusted in order to run this file on another
+dataset are indicated.
 
 When using a different set of parameters or PixelVAE architecture, set the 
 sampling_loop file in the tflib folder to run on your desired parameters.
