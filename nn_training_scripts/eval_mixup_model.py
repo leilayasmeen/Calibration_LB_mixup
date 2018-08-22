@@ -1,8 +1,9 @@
 # This file obtains predictions (and saves them in logit form) for the
 # ResNet-110 trained with mixup (specifically, the experiments in which
 # output-space mixed examples were created in every training batch)
-# It is based off a script implemented by Markus Kangsepp, and draws on code
-# from: https://raw.githubusercontent.com/yu4u/mixup-generator/master/mixup_generator.py
+# It is based off a script implemented by Markus Kangsepp: https://github.com/markus93/NN_calibration
+# It also draws on code from: 
+# https://raw.githubusercontent.com/yu4u/mixup-generator/master/mixup_generator.py
 # The ResNet model is from:
 # https://github.com/BIGBALLON/cifar-10-cnn/blob/master/4_Residual_Network/ResNet_keras.py
 
@@ -26,11 +27,11 @@ sys.path.append( path.dirname( path.dirname( path.abspath("utility") ) ) )
 from utility.evaluation import evaluate_model
 
 
-stack_n            = 18            
-num_classes10      = 10
-num_classes100     = 100
-img_rows, img_cols = 32, 32
-img_channels       = 3
+# Constants 
+stack_n            = 18 # How many residual blocks     
+num_classes        = 10 # Number of classes in the image dataset
+img_rows, img_cols = 32, 32 # Adjust image dimensions as needed
+img_channels       = 3 # Similarly for image channels
 batch_size         = 128
 epochs             = 200
 iterations         = 45000 // batch_size
@@ -39,7 +40,7 @@ mean = [125.307, 122.95, 113.865]
 std  = [62.9932, 62.0887, 66.7048]
 seed = 333
 
-# Load in the model weights 
+# Load in the model weights we trained
 weights_file_10 = "resnet_110_45kclip_mixup.h5"
 
 def scheduler(epoch):
@@ -52,7 +53,7 @@ def scheduler(epoch):
 # Define the ResNet
 def residual_network(img_input,classes_num=10,stack_n=5):
     
-    # Define residual blocks
+    # Define a residual block
     def residual_block(intput,out_channel,increase=False):
         if increase:
             stride = (2,2)
@@ -82,7 +83,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
             block = add([intput,conv_2])
         return block
 
-    # total layers = stack_n * 3 * 2 + 2
+    # Total layers = stack_n * 3 * 2 + 2
     # stack_n = 5 by default, total layers = 32
     # Input dimensions: 32x32x3 
     # Output dimensions: 32x32x16
