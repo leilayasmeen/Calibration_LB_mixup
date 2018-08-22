@@ -1,7 +1,8 @@
 # This file trains a ResNet-110 with mixup
 # Output-space mixed examples are created in every training batch
 # It is based off scripts implemented by Markus Kangsepp: https://github.com/markus93/NN_calibration
-# It draws on code from:
+# It uses 'mixup_generator.py' to create pixel-space mixed examples in every training batch.
+# 'mixup_generator.py' was obtained from:
 # https://raw.githubusercontent.com/yu4u/mixup-generator/master/mixup_generator.py
 # The ResNet model is obtained from:
 # https://github.com/BIGBALLON/cifar-10-cnn/blob/master/4_Residual_Network/ResNet_keras.py
