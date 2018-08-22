@@ -45,7 +45,7 @@ This file trains a 3-pixel receptive field PixelCNN on CIFAR-10 by default. The 
 **To produce reliability diagrams, type:**
 *python reliability.py*
 
-These two files, and the backup files they draw on (contained in the utility folder), were obtained from Kangsepp (2018) and adjusted as needed for this paper. They calculates ECE, MCE, error, and cross-entropy loss given the logit vectors for a set of neural networks. Thus, each neural network of interest must be evaluated using the "evaluations" files prior to running these files.
+These two files, and the backup files they draw on (contained in the utility folder), were obtained from Kangsepp (2018b) and adjusted as needed for this paper. They calculates ECE, MCE, error, and cross-entropy loss given the logit vectors for a set of neural networks. Thus, each neural network of interest must be evaluated using the "evaluations" files prior to running these files.
 
 
 
