@@ -1,7 +1,7 @@
 
 """
 This file creates interpolations using Latent Blending. 
-Before using this file, use train_pixelvae_cifar10.py to train
+Before using this file, use train_pixelvae.py to train
 a PixelVAE on CIFAR-10 (or another dataset). This file is currently
 set to run for CIFAR-10; however, the lines which need
 to be adjusted in order to run this file on another dataset have been labelled.
@@ -10,9 +10,7 @@ When using a different set of parameters or PixelVAE architecture,
 change the sampling_loop file to the one 
 which is tailored to run on your desired set of parameters.
 
-This code is adapted from:
-
-PixelVAE: A Latent Variable Model for Natural Images
+This code is adapted from: PixelVAE: A Latent Variable Model for Natural Images
 Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga, 
 Francesco Visin, David Vazquez, Aaron Courville
 """
@@ -576,8 +574,14 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     
                # Save the original images
                print "Saving original samples"
-               color_grid_vis(image1, 1, 1, 'original_1_classes{}and{}_num{}.png'.format(class1,class2,imagenum))
-               color_grid_vis(image2,1,1,'original_2_classes{}and{}_num{}.png'.format(class1,class2,imagenum))
+               color_grid_vis(image1, 
+                              1, 1, 
+                              'original_1_classes{}and{}_num{}.png'.format(class1,
+                                                                           class2,imagenum))
+               color_grid_vis(image2,
+                              1,1,
+                              'original_2_classes{}and{}_num{}.png'.format(class1,
+                                                                           class2,imagenum))
                       
                # Encode the images
                image_code1 = enc_fn(image1)
@@ -625,7 +629,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                   y_augmentation_set_slicp = np.concatenate((y_augmentation_set_slicp, new_label_slicp), axis=0)
                 
                   # Save the SLI-CP-mixed example as an image. Comment out this line if desired.
-                  color_grid_vis(sample_slicp,1,1,'interpolation_slicp_classes{}and{}_pval{}_num{}.png'.format(class1,class2,p,imagenum))
+                  color_grid_vis(sample_slicp,
+                                 1,1,
+                                 'interpolation_slicp_classes{}and{}_pval{}_num{}.png'.format(class1,
+                                                                                              class2,
+                                                                                              p,
+                                                                                              imagenum))
 
                   # Interpolation 3: Spherical linear interpolation between closely related classes (Slerp-CP)
                   if so == 0:
@@ -649,7 +658,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                   y_augmentation_set_slerpcp = np.concatenate((y_augmentation_set_slerpcp, new_label_slerpcp), axis=0)
    
                   # Save the Slerp-mixed example as an image. Comment out this line if desired.
-                  color_grid_vis(sample_slerpcp,1,1,'interpolation_slerpcp_classes{}and{}_pval{}_num{}.png'.format(class1,class2,p,imagenum))
+                  color_grid_vis(sample_slerpcp,
+                                 1,1,
+                                 'interpolation_slerpcp_classes{}and{}_pval{}_num{}.png'.format(class1,
+                                                                                                class2,
+                                                                                                p,
+                                                                                                imagenum))
 
             # Remove the placeholder rows in the image and label arrays
             x_augmentation_array_slicp = np.delete(x_augmentation_set_slicp, (0), axis=0)
