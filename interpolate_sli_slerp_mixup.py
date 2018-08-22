@@ -1,25 +1,33 @@
 
 """
-This file creates interpolations using Latent Blending. 
-Before using this file, use train_pixelvae_cifar10.py to train
-a PixelVAE on CIFAR-10 (or another dataset). 
+This file creates interpolations using Latent Blending and mixup. Before using this 
+file, use train_pixelvae_cifar10.py to train a PixelVAE on CIFAR-10. 
 This file is currently set to run for CIFAR-10; however, the lines which need
-to be adjusted in order to run this file on another dataset have been labelled.
+to be adjusted in order to run this file on another dataset are indicated.
 
-When using a different set of parameters or PixelVAE architecture, change the 
-sampling_loop file to the one which is set to run on your desired parameters.
+When using a different set of parameters or PixelVAE architecture, set the 
+sampling_loop file in the tflib folder to run on your desired parameters.
 
-This code is adapted from: PixelVAE: A Latent Variable Model for Natural Images
-Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga,
+This code is adapted from "PixelVAE: A Latent Variable Model for Natural Images"
+By Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga,
 Francesco Visin, David Vazquez, Aaron Courville
 """
 
+# Import all the libraries needed
 import os, sys
 sys.path.append(os.getcwd())
-
-N_GPUS = 2
-
+import numpy as np
+import tensorflow as tf
+import imageio
+from imageio import imsave
+import keras
+import time
+import functools
+import sklearn
+from sklearn.model_selection import train_test_split
 import random
+
+# Import the support files needed from our repository
 import tflib as lib
 import tflib.sampling_loop_cifar_filter_3
 import tflib.ops.kl_unit_gaussian
@@ -29,124 +37,58 @@ import tflib.ops.linear
 import tflib.ops.batchnorm
 import tflib.ops.embedding
 
-import numpy as np
-import tensorflow as tf
-import imageio
-from imageio import imsave
+# Adjust these to run interpolations on another dataset (e.g., 'mnist_256')
+DATASET = 'cifar10' 
+SETTINGS = '32px_cifar' 
 
-import keras
-
-import time
-import functools
-
-import sklearn
-from sklearn.model_selection import train_test_split
-
-DATASET = 'cifar10' # Can be adjusted to run interpolations on MNIST. If so, change to 'mnist_256'
-SETTINGS = '32px_cifar' # If working with MNIST, change to 'mnist_256'
-
-# Adjust this to match your desired output directory
+# Adjust this to match the name of your desired output directory
 OUT_DIR = DATASET + '_interpolations_filter_3'
 
 if not os.path.isdir(OUT_DIR):
    os.makedirs(OUT_DIR)
    print "Created directory {}".format(OUT_DIR)
 
-if SETTINGS == 'mnist_256':
-    
-    from keras.datasets import mnist
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    
-    # two_level uses Enc1/Dec1 for the bottom level, Enc2/Dec2 for the top level
-    # one_level uses EncFull/DecFull for the bottom (and only) level
-    MODE = 'one_level'
+# We have pruned other dataset options from this code; they are available in the Github repo
+if SETTINGS=='32px_cifar':
 
-    # Whether to treat pixel inputs to the model as real-valued (as in the 
-    # original PixelCNN) or discrete (gets better likelihoods).
-    EMBED_INPUTS = True
-
-    # Turn on/off the bottom-level PixelCNN in Dec1/DecFull
-    PIXEL_LEVEL_PIXCNN = True
-    HIGHER_LEVEL_PIXCNN = True
-
-    DIM_EMBED    = 16
-    DIM_PIX_1    = 32
-    DIM_1        = 16
-    DIM_2        = 32
-    DIM_3        = 32
-    DIM_4        = 64
-    LATENT_DIM_2 = 128
-    NUM_CLASSES = 10
-
-    ALPHA1_ITERS = 5000
-    ALPHA2_ITERS = 5000
-    KL_PENALTY = 1.0
-    BETA_ITERS = 1000
-      
-    PIX_2_N_BLOCKS = 1
-
-    TIMES = {
-        'test_every': 2*500,
-        'stop_after': 500*500,
-        'callback_every': 10*500
-    }
-
-    LR = 1e-3
-
-    LR_DECAY_AFTER = TIMES['stop_after']
-    LR_DECAY_FACTOR = 1.
-
-    BATCH_SIZE = 100 
-    N_CHANNELS = 1
-    HEIGHT = 28
-    WIDTH = 28
-
-    # These aren't actually used for one-level models but some parts
-    # of the code still depend on them being defined.
-    LATENT_DIM_1 = 64
-    LATENTS1_HEIGHT = 7
-    LATENTS1_WIDTH = 7
-
-elif SETTINGS=='32px_cifar':
-
+    # Import dataset
     from keras.datasets import cifar10
     (x_train_set, y_train_set), (x_test_set, y_test_set) = cifar10.load_data()
    
     x_train_set = x_train_set.transpose(0,3,1,2)
     x_test_set = x_test_set.transpose(0,3,1,2)
     
-    # Set seed to allow for reproducibility. The same seed is used to split the dataset when training all neural networks.
+    # The same seed is used to split the dataset when training all neural networks.
     seed = 333
-    # Split into training, validation, and test sets
+      
+    # Split CIFAR-10 into training, validation, and test sets
     x_train_set, x_dev_set, y_train_set, y_dev_set = train_test_split(x_train_set, y_train_set, test_size=0.1, random_state=seed)
 
-    # one_level uses EncFull/DecFull for the bottom (and only) level
+    # Adjust based on how many levels of latent variables the PixelVAE should contain
     MODE = 'one_level'
 
     # Whether to treat pixel inputs to the model as real-valued (as in the 
     # original PixelCNN) or discrete (gets better likelihoods).
     EMBED_INPUTS = True
 
-    # Turn on/off the bottom-level PixelCNN in DecFull
+    # Turn the bottom-level PixelCNN in DecFull on (True) or off (False)
     PIXEL_LEVEL_PIXCNN = True
     HIGHER_LEVEL_PIXCNN = True
 
-    DIM_EMBED    = 16
+    DIM_EMBED    = 16 
     DIM_PIX_1    = 192 
     DIM_0        = 96 
     DIM_1        = 128 
     DIM_2        = 256 
     DIM_3        = 256
     DIM_4        = 256 
-    LATENT_DIM_2 = 256 
+    LATENT_DIM_2 = 256 # This controls the dimensions of the latent codes
 
-    ALPHA1_ITERS = 50000
+    # Running parameters - these are not directly relevant for pre-trained models
+    ALPHA1_ITERS = 50000 
     ALPHA2_ITERS = 50000
     KL_PENALTY = 1.0
     BETA_ITERS = 1000
-   
-    PIX_2_N_BLOCKS = 1
-
     TIMES = {
         'test_every': 10000,
         'stop_after': 400000,
@@ -154,30 +96,27 @@ elif SETTINGS=='32px_cifar':
     }
     
     LR = 1e-3
-
+    PIX_2_N_BLOCKS = 1
     LR_DECAY_AFTER = 180000
     LR_DECAY_FACTOR = 0.5
 
-    BATCH_SIZE = 50 # 48
-    N_CHANNELS = 3
-    HEIGHT = 32 #64
-    WIDTH = 32 #64
+    BATCH_SIZE = 50 
+    N_CHANNELS = 3 # Change to 1 channel for black and white images
+    HEIGHT = 32 # Adjust height and width based on the dataset
+    WIDTH = 32 
    
     NUM_CLASSES = 10
-
-    # These aren't actually used for one-level models but some parts
-    # of the code still depend on them being defined.
+   
+    # These are not directly relevant for interpolations, but are required in 
+    # original PixelVAE implementation
     LATENT_DIM_1 = 32 
     LATENTS1_HEIGHT = 7
     LATENTS1_WIDTH = 7
-
-if DATASET == 'mnist_256':
-    train_data, dev_data, test_data = lib.mnist_256.load(BATCH_SIZE, BATCH_SIZE) 
-elif DATASET == 'cifar10':
     train_data, dev_data, test_data = lib.cifar_256.load(BATCH_SIZE) 
 
 lib.print_model_settings(locals().copy())
 
+# Split work across visible gpus
 DEVICES = ['/gpu:{}'.format(i) for i in xrange(N_GPUS)]
 
 lib.ops.conv2d.enable_default_weightnorm()
@@ -212,7 +151,8 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                 output = tf.depth_to_space(output, 2)
                 output = tf.transpose(output, [0,3,1,2])
                 return output
-
+            
+            # Define the residual blocks
             def ResidualBlock(name, input_dim, output_dim, inputs, filter_size, mask_type=None, resample=None, he_init=True):
                 """
                 resample: None, 'down', or 'up'
@@ -340,7 +280,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     else:
                         masked_images = lib.ops.conv2d.Conv2D('DecFull.Pix1', input_dim=N_CHANNELS, output_dim=dim, filter_size=3, inputs=images, mask_type=('a', N_CHANNELS), he_init=False)
 
-                    # Warning! Because of the masked convolutions it's very important that masked_images comes first in this concat
+                    # Because of the masked convolutions, it's very important that masked_images comes first in this concat
                     output = tf.concat([masked_images, output], axis=1)
 
                     output = ResidualBlock('DecFull.Pix2Res', input_dim=2*dim,   output_dim=DIM_PIX_1, filter_size=3, mask_type=('b', N_CHANNELS), inputs=output)
@@ -367,7 +307,6 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                 return mu, logsig, sig
          
             def clamp_logsig_and_sig(logsig, sig):
-                # Early during training (see BETA_ITERS), stop sigma from going too low
                 floor = 1. - tf.minimum(1., tf.cast(total_iters, 'float32') / BETA_ITERS)
                 log_floor = tf.log(floor)
                 return tf.maximum(logsig, log_floor), tf.maximum(sig, floor)
@@ -379,8 +318,6 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                 embedded_images = tf.transpose(embedded_images, [0,4,1,2,3])
                 embedded_images = tf.reshape(embedded_images, [-1, DIM_EMBED*N_CHANNELS, HEIGHT, WIDTH])
 
-            if MODE == 'one_level':
-
             # Layer 1
             if EMBED_INPUTS:
                mu_and_logsig1 = EncFull(embedded_images)
@@ -389,7 +326,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             mu1, logsig1, sig1 = split(mu_and_logsig1)
 
             eps = tf.random_normal(tf.shape(mu1))
-            latents1 = mu1 # Adjust this line to mu1 + eps*logsig1 to use sampled latent codes instead of the mean latent code
+            latents1 = mu1 # Adjust this line to mu1 + eps*logsig1 to use sampled latent codes instead of the mean latent code mu1
 
             if EMBED_INPUTS:
                outputs1 = DecFull(latents1, embedded_images)
@@ -403,8 +340,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
 
             # Assembly
 
-            # An alpha of exactly 0 can sometimes cause inf/nan values, so we're
-            # careful to avoid it.
+            # Used to avoid invalid alpha values, following Gulrajani (2015)
             alpha = tf.minimum(1., tf.cast(total_iters+1, 'float32') / ALPHA1_ITERS) * KL_PENALTY
 
             kl_cost_1 = tf.reduce_mean(lib.ops.kl_unit_gaussian.kl_unit_gaussian(mu1,logsig1,sig1))
@@ -419,7 +355,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
         tf.concat([tf.expand_dims(x, 0) for x in tower_cost], axis=0), 0
     )
       
-    # Sampling
+    # Create mixed examples
 
     if MODE == 'one_level':
 
@@ -449,9 +385,8 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             x_augmentation_set_mixup = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH)) 
             y_augmentation_set_mixup = np.zeros((1, 1, NUM_CLASSES))
 
-            # Function to translate numeric images into plots
+            # Function to translate numeric images into plots. The original code was from github.com/Newmu
             def color_grid_vis(X, nh, nw, save_path):
-                # Original code from github.com/Newmu
                 X = X.transpose(0,2,3,1)
                 h, w = X[0].shape[:2]
                 img = np.zeros((h*nh, w*nw, 3))
@@ -468,7 +403,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             y_train_set_array = np.array(y_train_set)  
             
             for imagenum in range(numsamples):
-                for class1 in range(NUM_CLASSES-1): # use these nested for loops to sample images from every pair of classes
+                for class1 in range(NUM_CLASSES-1): # These nested for loops are used to sample images from every pair of classes
                   idx1 = np.asarray(np.where(np.equal(class1, y_train_set))[0])
                   x_trainsubset1 = x_train_set_array[idx1,:]
                   y_trainsubset1 = y_train_set_array[idx1,:]
@@ -499,13 +434,11 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     
                     # Save the original images
                     print "Saving original samples"
-                    color_grid_vis(image1, 
-                                   1, 1, 
+                    color_grid_vis(image1,1, 1, 
                                    'original_1_classes{}and{}_num{}.png'.format(class1,
                                                                                 class2,
                                                                                 imagenum))
-                    color_grid_vis(image2,
-                                   1,1,
+                    color_grid_vis(image2,1,1,
                                    'original_2_classes{}and{}_num{}.png'.format(class1,
                                                                                 class2,
                                                                                 imagenum))
@@ -518,8 +451,9 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     label1 = np_utils.to_categorical(label1, NUM_CLASSES) 
                     label2 = np_utils.to_categorical(label2, NUM_CLASSES) 
                
-                    # Lambda values to use for the specific weighting scheme. We use "p" instead of lambda in the code as it is shorter.
-                  
+                    # Lambda values to use for the specific weighting scheme. We use "p" instead of lambda here
+                    # in the code, unlike the paper, as it is shorter.
+                     
                     # This option is for constant lambda in {0.2, 0.4, 0.6, 0.8}
                     pvals = np.linspace(0.2, 0.8, num=4) 
                   
@@ -534,7 +468,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     omega = np.arccos(np.clip(np.dot(vec1, vec2), -1, 1))
                     so = np.sin(omega) 
                   
-                    # Combine the latent codes
+                    # Mix the latent codes
                     for p in pvals:
                       
                       # Interpolation 1: Simple linear interpolation (SLI)
@@ -555,14 +489,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                       x_augmentation_set_sli = np.concatenate((x_augmentation_set_sli, sample_sli), axis=0)
                       y_augmentation_set_sli = np.concatenate((y_augmentation_set_sli, new_label_sli), axis=0)
                 
-                      # Save the SLI-mixed example as an image. Comment out this line if desired.
-                      color_grid_vis(sample_sli,
-                                     1,1,
+                      # Save the SLI-mixed example as an image file. Comment out this line if desired.
+                      color_grid_vis(sample_sli,1,1,
                                      'interpolation_sli_classes{}and{}_pval{}_num{}.png'.format(class1,
                                                                                                 class2,
                                                                                                 p,
                                                                                                 imagenum))
-
                       # Interpolation 3: Spherical linear interpolation (Slerp)
                       if so == 0:
                         new_code_slerp = (1.0-p) * image_code1 + p * image_code2
@@ -584,14 +516,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                       x_augmentation_set_slerp = np.concatenate((x_augmentation_set_slerp, sample_slerp), axis=0)
                       y_augmentation_set_slerp = np.concatenate((y_augmentation_set_slerp, new_label_slerp), axis=0)
    
-                      # Save the Slerp-mixed example as an image. Comment out this line if desired.
-                      color_grid_vis(sample_slerp,
-                                     1,1,
+                      # Save the Slerp-mixed example as an image file. Comment out this line if desired.
+                      color_grid_vis(sample_slerp,1,1,
                                      'interpolation_slerp_classes{}and{}_pval{}_num{}.png'.format(class1,
                                                                                                   class2,
                                                                                                   p,
                                                                                                   imagenum))
-
                       # Output-space interpolations 
                       new_label_mixup = np.multiply(p,label1) + np.multiply((1-p),label2)
                       new_label_mixup = new_label_mixup.reshape(1,1,NUM_CLASSES)
@@ -608,14 +538,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                       x_augmentation_set_mixup = np.concatenate((x_augmentation_set_mixup, sample_mixup), axis=0)
                       y_augmentation_set_mixup = np.concatenate((y_augmentation_set_mixup, new_label_mixup), axis=0)
    
-                      # Save the output-space-mixed example as an image. Comment out this line if desired.
-                      color_grid_vis(sample_mixup,
-                                     1,1,
+                      # Save the output-space-mixed example as an file. Comment out this line if desired.
+                      color_grid_vis(sample_mixup,1,1,
                                      'interpolation_mixup_classes{}and{}_pval{}_num{}.png'.format(class1,
                                                                                                   class2,
                                                                                                   p,
                                                                                                   imagenum))
-
             # Remove the placeholder rows in the image and label arrays
             x_augmentation_array_sli = np.delete(x_augmentation_set_sli, (0), axis=0)
             y_augmentation_array_sli = np.delete(y_augmentation_set_sli, (0), axis=0)
@@ -637,7 +565,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             np.save(OUT_DIR + '/' + 'x_augmentation_array_mixup', x_augmentation_array_mixup)
             np.save(OUT_DIR + '/' + 'y_augmentation_array_mixup', y_augmentation_array_mixup) 
                       
-    # Run
+    # Run the session
 
     if MODE == 'one_level':
         prints=[
