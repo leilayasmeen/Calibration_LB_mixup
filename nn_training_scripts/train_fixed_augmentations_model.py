@@ -1,5 +1,10 @@
-# This file trains a ResNet-110 with a user-specified data
-# augmentation set that is added to the original training set.
+# This file trains a ResNet-110 on a specified fixed-size augmentation created
+# prior to training.
+
+# The lines which need to be edited from experiment to experiment have been outlined below. 
+# The current settings are for the experiment in which 4,500 Latent Blended pairs were created with SLI, mean
+# latent codes, Beta(0.2,0.2) weighting, and a single mixed image per pair of parent images.
+
 # It is based off a script implemented by Markus Kangsepp: https://github.com/markus93/NN_calibration
 # The ResNet model is from:
 # https://github.com/BIGBALLON/cifar-10-cnn/blob/master/4_Residual_Network/ResNet_keras.py
@@ -24,7 +29,7 @@ img_channels       = 3 # Similarly for image channels
 batch_size         = 128
 epochs             = 200
 # Edit the numerator to equal the total training set size (45,000 + aug_set_size)
-iterations         = 49500 // batch_size #
+iterations         = 49500 // batch_size 
 weight_decay       = 0.0001
 
 seed = 333
