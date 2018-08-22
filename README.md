@@ -1,6 +1,6 @@
 # Calibration_LB_mixup
 
-## PixelVAE training
+## Training a PixelVAE to use for *Latent Blending*
 **To train a PixelVAE using the architecture described in the paper, type:**
 
 *CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_pixelvae.py*
