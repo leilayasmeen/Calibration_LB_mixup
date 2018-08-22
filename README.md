@@ -2,48 +2,48 @@
 This repository contains the code needed to run the experiments in "The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation".
 
 ## Creating mixed examples with different types of interpolations
-**To create mixed-label augmentation sets of fixed sizes using SLI, Slerp, and mixup, and using SLI-CP and *Slerp*-CP, type:**
+**To create mixed-label augmentation sets of fixed sizes using SLI, *Slerp*, and *mixup*, SLI-CP, *Slerp*-CP, type:**
 
 ```
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python interpolate_sli_slerp_mixup.py
+CUDA_VISIBLE_DEVICES = <gpus> python interpolate_sli_slerp_mixup.py
 
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python interpolate_slicp_slerpcp.py
+CUDA_VISIBLE_DEVICES = <gpus> python interpolate_slicp_slerpcp.py
 ```
-These two interpolation files assumes that you have pre-trained PixelVAE parameters in the same directory, and it operates on CIFAR-10 by default. The dataset, as well as number and type of interpolations, can be adjusted using the commented lines within the code.
+These two interpolation files assume that you have pre-trained PixelVAE parameters in your directory, and they operate on CIFAR-10 by default. The dataset, as well as the number and types of interpolations, can be adjusted using the commented lines within the code.
 
 ## Training ResNet-110's 
 
-**To train a ResNet-110 on CIFAR-10 as a baseline, and then obtain predictions with it on the CIFAR-10 test set:**
+**To train a baseline ResNet-110 on CIFAR-10, and then obtain predictions with it on the CIFAR-10 test set:**
 
 ```
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_baseline_model.py
+CUDA_VISIBLE_DEVICES = <gpus> python train_baseline_model.py
 
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_baseline_model.py
+CUDA_VISIBLE_DEVICES = <gpus> python eval_baseline_model.py
 ```
 
-**Similary for ResNet-110's trained on an extra pre-created mixed-label augmentation set:**
+**For ResNet-110's that you wish to train using a pre-created mixed-label augmentation set:**
 
 ```
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_fixed_augmentations_model.py
+CUDA_VISIBLE_DEVICES = <gpus> python train_fixed_augmentations_model.py
 
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_fixed_augmentations_model.py
+CUDA_VISIBLE_DEVICES = <gpus> python eval_fixed_augmentations_model.py
 ```
 
-**Finally, to train and get predictions for a ResNet-110 using *mixup*:**
+**Finally, to train and get predictions for a ResNet-110 trained using *mixup*:**
 
 ```
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_mixup_model.py
+CUDA_VISIBLE_DEVICES = <gpus> python train_mixup_model.py
 
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_mixup_model.py
+CUDA_VISIBLE_DEVICES = <gpus> python eval_mixup_model.py
 ```
-The *mixup* files above draws on *mixup_generator.py* to generate mixed examples within every training batch. This file was adjusted based on the implementation by [yu4u](https://github.com/yu4u/mixup-generator). These three files should to be adjusted to run on the weights for the ResNet-110(s) of interest. Comments in the code have indicated where the adjustments need to be made.
+The *mixup* files above draw on *mixup_generator.py* to generate mixed examples within every training batch. The file *mixup_generator.py* was adjusted based on the implementation by [yu4u](https://github.com/yu4u/mixup-generator). All six files above should to be adjusted to run on the weights for the ResNet-110(s) of interest. Comments in the code indicate where adjustments need to be made.
 
-## Training a PixelVAE to use for *Latent Blending*
+## Training a PixelVAE for *Latent Blending*
 **To train a PixelVAE using the architecture described in the paper, type:**
 
 ```
 
-CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_pixelvae.py
+CUDA_VISIBLE_DEVICES = <gpus> python train_pixelvae.py
 
 ```
 
@@ -58,11 +58,11 @@ python calibration.py
 
 python reliability.py
 ```
-These two files, and the backup files they draw on (contained in the utility folder), were obtained from Kangsepp (2018b) and adjusted as needed for this paper. They calculates ECE, MCE, error, and cross-entropy loss given the logit vectors for a set of neural networks. Thus, each neural network of interest must be evaluated using the "evaluations" files prior to running these files.
+These two files, and the backup files they draw on (contained in the utility folder), were obtained from [markus93](https://github.com/markus93/NN_calibration) and adjusted as needed for this paper. They calculate ECE, MCE, error, and cross-entropy loss given the logit vectors for a set of neural networks. Thus, each neural network of interest must be evaluated using the appropriate "evaluation" file prior to running these two files.
 
 **Citation**
 
-If you use this method or code, please cite it using:
+If you use our methododology or code, please cite it using:
 
 ```
 @misc{
