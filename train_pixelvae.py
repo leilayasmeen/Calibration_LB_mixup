@@ -2,8 +2,9 @@
 """
 Code to train a PixelVAE generative model on the CIFAR-10 dataset.
 
-Code adapted from: PixelVAE: A Latent Variable Model for Natural Images
-Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga, Francesco Visin, David Vazquez, Aaron Courville
+This is heavily based on:PixelVAE: A Latent Variable Model for Natural Images
+Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga, Francesco Visin,
+David Vazquez, Aaron Courville
 """
 
 # Import required libraries
