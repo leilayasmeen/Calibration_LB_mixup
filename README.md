@@ -49,7 +49,7 @@ CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_pixelvae.py
 
 This file trains a 3-pixel receptive field PixelCNN on CIFAR-10 by default. The lines which need to be adjusted in order to train a PixelVAE on a different dataset, or with a different architecture, have been indicated with comments.
 
-## Evaluating calibration and generalization ability
+## Evaluating calibration
 
 **To evaluate the calibration of ResNet-110’s, and then produce reliability diagrams, type:**
 
@@ -68,8 +68,7 @@ If you use this method or code, please cite it using:
 @misc{
 leila2018nncalibrationmixedlabels,
 title={The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation},
-author={Leila Islam,
-url={https://github.com/leilayasmeen/Calibration_LB_mixup},
+author={Leila Islam}, url={https://github.com/leilayasmeen/Calibration_LB_mixup},
 }
 ```
 
