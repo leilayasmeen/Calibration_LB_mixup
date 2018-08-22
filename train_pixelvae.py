@@ -2,17 +2,14 @@
 """
 Code to train a PixelVAE generative model on the CIFAR-10 dataset.
 
-Code adapted from:
-
-PixelVAE: A Latent Variable Model for Natural Images
+Code adapted from: PixelVAE: A Latent Variable Model for Natural Images
 Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga, Francesco Visin, David Vazquez, Aaron Courville
 """
 
+# Import required libraries
 import os, sys
 sys.path.append(os.getcwd())
-
 N_GPUS = 2
-
 import tflib as lib
 import tflib.train_loop_cifar_filter_3
 import tflib.ops.kl_unit_gaussian
@@ -21,20 +18,18 @@ import tflib.ops.conv2d
 import tflib.ops.linear
 import tflib.ops.batchnorm
 import tflib.ops.embedding
-
 import tflib.cifar
 import tflib.cifar_256
-
 import numpy as np
 import tensorflow as tf
 import imageio
 from imageio import imsave
-
 import time
 import functools
 
-DATASET = 'cifar10' # mnist_256
-SETTINGS =  '32px_cifar' # debugging conducted with mnist_256
+# Specify dataset and overall settings for the PixelVAE
+DATASET = 'cifar10' # adjust this if you have multiple if/else loops below; only 1 is included for brevity
+SETTINGS =  '32px_cifar' # likewise
 
 OUT_DIR = DATASET + '_results' + '_filter_3'
 
@@ -42,71 +37,16 @@ if not os.path.isdir(OUT_DIR):
    os.makedirs(OUT_DIR)
    print "Created directory {}".format(OUT_DIR)
 
-if SETTINGS == 'mnist_256':
-    # two_level uses Enc1/Dec1 for the bottom level, Enc2/Dec2 for the top level
-    # one_level uses EncFull/DecFull for the bottom (and only) level
+if SETTINGS=='32px_cifar':
+
+    # Adjust this if you wish to train a PixelVAE with multiple latent layers
     MODE = 'one_level'
 
     # Whether to treat pixel inputs to the model as real-valued (as in the 
     # original PixelCNN) or discrete (gets better likelihoods).
     EMBED_INPUTS = True
 
-    # Turn on/off the bottom-level PixelCNN in Dec1/DecFull
-    PIXEL_LEVEL_PIXCNN = True
-    HIGHER_LEVEL_PIXCNN = True
-
-    DIM_EMBED    = 16
-    DIM_PIX_1    = 32
-    DIM_1        = 16
-    DIM_2        = 32
-    DIM_3        = 32
-    DIM_4        = 64
-    LATENT_DIM_2 = 128
-
-    ALPHA1_ITERS = 5000
-    ALPHA2_ITERS = 5000
-    KL_PENALTY = 1.0
-    BETA_ITERS = 1000
-
-    # In Dec2, we break each spatial location into N blocks (analogous to channels
-    # in the original PixelCNN) and model each spatial location autoregressively
-    # as P(x)=P(x0)*P(x1|x0)*P(x2|x0,x1)... In my experiments values of N > 1
-    # actually hurt performance. Unsure why; might be a bug.
-    PIX_2_N_BLOCKS = 1
-
-    TIMES = {
-        'test_every': 2*500,
-        'stop_after': 500*500,
-        'callback_every': 10*500
-    }
-
-    LR = 1e-3
-
-    LR_DECAY_AFTER = TIMES['stop_after']
-    LR_DECAY_FACTOR = 1.
-
-    BATCH_SIZE = 100
-    N_CHANNELS = 1
-    HEIGHT = 28
-    WIDTH = 28
-
-    # These aren't actually used for one-level models but some parts
-    # of the code still depend on them being defined.
-    LATENT_DIM_1 = 64
-    LATENTS1_HEIGHT = 7
-    LATENTS1_WIDTH = 7
-
-elif SETTINGS=='32px_cifar':
-
-    # two_level uses Enc1/Dec1 for the bottom level, Enc2/Dec2 for the top level
-    # one_level uses EncFull/DecFull for the bottom (and only) level
-    MODE = 'one_level'
-
-    # Whether to treat pixel inputs to the model as real-valued (as in the 
-    # original PixelCNN) or discrete (gets better likelihoods).
-    EMBED_INPUTS = True
-
-    # Turn on/off the bottom-level PixelCNN in Dec1/DecFull
+    # Adjust this line to turnthe bottom-level PixelCNN in DecFull on or off
     PIXEL_LEVEL_PIXCNN = True
     HIGHER_LEVEL_PIXCNN = True
 
@@ -117,24 +57,19 @@ elif SETTINGS=='32px_cifar':
     DIM_2        = 256 
     DIM_3        = 256 
     DIM_4        = 256 
-    LATENT_DIM_2 = 256 # Adjust this line to change the dimensionality of the latent code for a one-level PixelVAE
+    LATENT_DIM_2 = 256 # Adjust this line to change the latent-space dimensions
 
     ALPHA1_ITERS = 50000
     ALPHA2_ITERS = 50000
     KL_PENALTY = 1.0
     BETA_ITERS = 1000
 
-    # In Dec2, we break each spatial location into N blocks (analogous to channels
+    # We break each image spatial location into PIX_2_N_BLOCKS (analogous to channels
     # in the original PixelCNN) and model each spatial location autoregressively
-    # as P(x)=P(x0)*P(x1|x0)*P(x2|x0,x1)... In my experiments values of N > 1
-    # actually hurt performance. Unsure why; might be a bug.
+    # as P(x)=P(x0)*P(x1|x0)*P(x2|x0,x1).
     PIX_2_N_BLOCKS = 1
 
-    TIMES = {
-        'test_every': 10000,
-        'stop_after': 400000,
-        'callback_every': 50000
-    }
+    TIMES = {'test_every': 10000, 'stop_after': 400000, 'callback_every': 50000}
     
     LR = 1e-3
 
@@ -146,15 +81,13 @@ elif SETTINGS=='32px_cifar':
     HEIGHT = 32 #64
     WIDTH = 32 #64
 
-    # These aren't actually used for one-level models but some parts
-    # of the code still depend on them being defined.
+    # These are not used for one-level models, but some parts
+    # of the code depend on them being defined.
     LATENT_DIM_1 = 32 
     LATENTS1_HEIGHT = 7
     LATENTS1_WIDTH = 7
     
-if DATASET == 'mnist_256':
-    train_data, dev_data, test_data = lib.mnist_256.load(BATCH_SIZE, BATCH_SIZE)
-elif DATASET == 'cifar10':
+if DATASET == 'cifar10':
     train_data, dev_data, test_data = lib.cifar_256.load(BATCH_SIZE)
 
 lib.print_model_settings(locals().copy())
@@ -177,6 +110,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
     tower_cost = []
     tower_outputs1_sample = []
 
+    # Define the architecture of the PixelVAE
     for device_index, (device, images, latents1_sample) in enumerate(zip(DEVICES, split_images, split_latents1)):
         with tf.device(device):
 
@@ -225,7 +159,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                 return shortcut + output
 
             
-            # Define Encoder
+            # Define the encoder
             def EncFull(images):
                 output = images
 
@@ -439,7 +373,9 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                samples[:,ch,y,x] = next_sample
 
       print "Saving samples"
-      color_grid_vis(samples, 1, 1,'samples_filter_3_{}.png'.format(tag)) # Adjust this when creating multi-dimensional plots
+      color_grid_vis(samples, 
+                     1, 1, # Adjust when creating multi-dimensional plots
+                     'samples_filter_3_{}.png'.format(tag)) 
 
     # Train!
 
