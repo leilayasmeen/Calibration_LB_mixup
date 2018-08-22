@@ -66,17 +66,19 @@ These two files, and the backup files they draw on (contained in the utility fol
 
 If you use this method or this code in your study, please cite it using:
 
-`@misc{
+```
+@misc{
 leila2018nncalibrationmixedlabels,
 title={The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation},
 author={Leila Islam,
 url={https://github.com/leilayasmeen/Calibration_LB_mixup},
-}`
+}
+```
 
 **Requirements**
 
 * Python version 2.7
-* Tensorflow Version 1.5, 1.7, or 1.8
+* Tensorflow version 1.5, 1.7, or 1.8
 
 **Acknowledgements**
 
