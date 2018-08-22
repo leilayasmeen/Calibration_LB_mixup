@@ -558,7 +558,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             x_augmentation_array_slerp = x_augmentation_array_slerp.astype(np.uint8)
             x_augmentation_array_mixup = x_augmentation_array_mixup.astype(np.uint8)
 
-            # Save arrays containing the augmentation sets
+            # Save arrays containing the augmentation sets as .npy files
             np.save(OUT_DIR + '/' + 'x_augmentation_array_sli', x_augmentation_array_sli)
             np.save(OUT_DIR + '/' + 'y_augmentation_array_sli', y_augmentation_array_sli)
             np.save(OUT_DIR + '/' + 'x_augmentation_array_slerp', x_augmentation_array_slerp)
