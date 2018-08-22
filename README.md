@@ -3,15 +3,11 @@
 This repository contains the code needed to run the experiments in "The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation".
 
 ## Creating mixed examples with different types of interpolations
-**To create mixed-label augmentation sets of fixed sizes using SLI, Slerp, and mixup, type:**
+**To create mixed-label augmentation sets of fixed sizes using SLI, Slerp, and mixup, and using SLI-CP and *Slerp*-CP, type:**
 
 ```
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python interpolate_sli_slerp_mixup.py
-```
 
-**To create mixed-label augmentation sets of fixed sizes using SLI-CP and Slerp-CP, type:**
-
-```
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python interpolate_slicp_slerpcp.py
 ```
 
@@ -19,37 +15,33 @@ These two interpolation files assumes that you have pre-trained PixelVAE paramet
 
 ## Training ResNet-110's 
 
-**To train a ResNet-110 on CIFAR-10 as a baseline:**
+**To train a ResNet-110 on CIFAR-10 as a baseline, and then obtain predictions with it on the CIFAR-10 test set:**
 
 ```
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_baseline_model.py
+
+CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_baseline_model.py
+
 ```
 
-**To train a ResNet-110 on CIFAR-10 using a pre-created mixed label augmentation set, type:**
+**To train a ResNet-110 on CIFAR-10 using a pre-created mixed label augmentation set, and then obtain predictions with it on the CIFAR-10 test set:**
 
 ```
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_fixed_augmentations_model.py
+
+CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_fixed_augmentations_model.py
+
 ```
 
-**To train a ResNet-110 on CIFAR-10 using mixup, type:**
+**To train a ResNet-110 on CIFAR-10 using mixup, , and then obtain predictions with it on the CIFAR-10 test set:**
 
 ```
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_mixup_model.py
-```
 
-The file above draws on mixup_generator.py, as it generates mixed examples within every training batch. This file was adjusted based on the implementation by Uchida (2017).
-
-## Finding test predictions for ResNet 110's
-
-**To obtain ResNet-110 predictions on the CIFAR-10 test set, type:**
+CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_mixup_model.py
 
 ```
-python eval_baseline_model.py
-
-python eval_mixup_model.py
-
-python eval_fixed_augmentations_model.py
-```
+The *mixup* files above draws on *mixup_generator.py* to generate mixed examples within every training batch. This file was adjusted based on the implementation by [yu4u](https://github.com/yu4u/mixup-generator).
 
 These three files should to be adjusted to run on the weights for the ResNet-110(s) of interest. Comments in the code have indicated where the adjustments need to be made.
 
@@ -57,25 +49,23 @@ These three files should to be adjusted to run on the weights for the ResNet-110
 **To train a PixelVAE using the architecture described in the paper, type:**
 
 ```
+
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_pixelvae.py
+
 ```
 
 This file trains a 3-pixel receptive field PixelCNN on CIFAR-10 by default. The lines which need to be adjusted in order to train a PixelVAE on a different dataset, or with a different architecture, have been indicated with comments.
 
 ## Evaluating calibration and generalization ability
 
-**To evaluate the calibration of ResNet-110’s, type:**
+**To evaluate the calibration of ResNet-110’s, and then produce reliability diagrams, type:**
 
 ```
 python calibration.py
-```
 
-**To produce reliability diagrams, type:**
-
-```
 python reliability.py
-```
 
+```
 These two files, and the backup files they draw on (contained in the utility folder), were obtained from Kangsepp (2018b) and adjusted as needed for this paper. They calculates ECE, MCE, error, and cross-entropy loss given the logit vectors for a set of neural networks. Thus, each neural network of interest must be evaluated using the "evaluations" files prior to running these files.
 
 **Citation**
