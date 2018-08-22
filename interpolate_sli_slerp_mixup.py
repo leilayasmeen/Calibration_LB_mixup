@@ -9,9 +9,7 @@ to be adjusted in order to run this file on another dataset have been labelled.
 When using a different set of parameters or PixelVAE architecture, change the 
 sampling_loop file to the one which is set to run on your desired parameters.
 
-This code is adapted from:
-
-PixelVAE: A Latent Variable Model for Natural Images
+This code is adapted from: PixelVAE: A Latent Variable Model for Natural Images
 Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga,
 Francesco Visin, David Vazquez, Aaron Courville
 """
@@ -500,8 +498,16 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     
                     # Save the original images
                     print "Saving original samples"
-                    color_grid_vis(image1, 1, 1, 'original_1_classes{}and{}_num{}.png'.format(class1,class2,imagenum))
-                    color_grid_vis(image2,1,1,'original_2_classes{}and{}_num{}.png'.format(class1,class2,imagenum))
+                    color_grid_vis(image1, 
+                                   1, 1, 
+                                   'original_1_classes{}and{}_num{}.png'.format(class1,
+                                                                                class2,
+                                                                                imagenum))
+                    color_grid_vis(image2,
+                                   1,1,
+                                   'original_2_classes{}and{}_num{}.png'.format(class1,
+                                                                                class2,
+                                                                                imagenum))
                       
                     # Encode the images
                     image_code1 = enc_fn(image1)
@@ -549,7 +555,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                       y_augmentation_set_sli = np.concatenate((y_augmentation_set_sli, new_label_sli), axis=0)
                 
                       # Save the SLI-mixed example as an image. Comment out this line if desired.
-                      color_grid_vis(sample_sli,1,1,'interpolation_sli_classes{}and{}_pval{}_num{}.png'.format(class1,class2,p,imagenum))
+                      color_grid_vis(sample_sli,
+                                     1,1,
+                                     'interpolation_sli_classes{}and{}_pval{}_num{}.png'.format(class1,
+                                                                                                class2,
+                                                                                                p,
+                                                                                                imagenum))
 
                       # Interpolation 3: Spherical linear interpolation (Slerp)
                       if so == 0:
@@ -573,7 +584,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                       y_augmentation_set_slerp = np.concatenate((y_augmentation_set_slerp, new_label_slerp), axis=0)
    
                       # Save the Slerp-mixed example as an image. Comment out this line if desired.
-                      color_grid_vis(sample_slerp,1,1,'interpolation_slerp_classes{}and{}_pval{}_num{}.png'.format(class1,class2,p,imagenum))
+                      color_grid_vis(sample_slerp,
+                                     1,1,
+                                     'interpolation_slerp_classes{}and{}_pval{}_num{}.png'.format(class1,
+                                                                                                  class2,
+                                                                                                  p,
+                                                                                                  imagenum))
 
                       # Output-space interpolations 
                       new_label_mixup = np.multiply(p,label1) + np.multiply((1-p),label2)
@@ -592,7 +608,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                       y_augmentation_set_mixup = np.concatenate((y_augmentation_set_mixup, new_label_mixup), axis=0)
    
                       # Save the output-space-mixed example as an image. Comment out this line if desired.
-                      color_grid_vis(sample_mixup,1,1,'interpolation_mixup_classes{}and{}_pval{}_num{}.png'.format(class1,class2,p,imagenum))
+                      color_grid_vis(sample_mixup,
+                                     1,1,
+                                     'interpolation_mixup_classes{}and{}_pval{}_num{}.png'.format(class1,
+                                                                                                  class2,
+                                                                                                  p,
+                                                                                                  imagenum))
 
             # Remove the placeholder rows in the image and label arrays
             x_augmentation_array_sli = np.delete(x_augmentation_set_sli, (0), axis=0)
