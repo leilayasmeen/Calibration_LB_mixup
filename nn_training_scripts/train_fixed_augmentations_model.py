@@ -1,6 +1,6 @@
-# This file trains a ResNet-110, with a user-specified data
+# This file trains a ResNet-110 with a user-specified data
 # augmentation set that is added to the original training set.
-# It is based off a script implemented by Markus Kangsepp.
+# It is based off a script implemented by Markus Kangsepp: https://github.com/markus93/NN_calibration
 # The ResNet model is from:
 # https://github.com/BIGBALLON/cifar-10-cnn/blob/master/4_Residual_Network/ResNet_keras.py
 
@@ -16,11 +16,11 @@ from keras import optimizers, regularizers
 from sklearn.model_selection import train_test_split
 import pickle
 
-# Constants
-stack_n            = 18            
-num_classes        = 10
-img_rows, img_cols = 32, 32
-img_channels       = 3
+# Constants 
+stack_n            = 18 # How many residual blocks     
+num_classes        = 10 # Number of classes in the image dataset
+img_rows, img_cols = 32, 32 # Adjust image dimensions as needed
+img_channels       = 3 # Similarly for image channels
 batch_size         = 128
 epochs             = 200
 # Edit the numerator to equal the total training set size (45,000 + aug_set_size)
@@ -39,7 +39,7 @@ def scheduler(epoch):
 # Define the ResNet
 def residual_network(img_input,classes_num=10,stack_n=5):
     
-    # Define residual blocks
+    # Define a residual block
     def residual_block(intput,out_channel,increase=False):
         if increase:
             stride = (2,2)
@@ -71,7 +71,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
             block = add([intput,conv_2])
         return block
 
-    # total layers = stack_n * 3 * 2 + 2
+    # Total layers = stack_n * 3 * 2 + 2
     # stack_n = 5 by default, total layers = 32
     # Input dimensions: 32x32x3 
     # Output dimensions: 32x32x16
