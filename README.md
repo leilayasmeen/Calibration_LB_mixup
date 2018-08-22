@@ -6,6 +6,7 @@ This repository contains the code needed to run the experiments in "The Uncertai
 **To create mixed-label augmentation sets of fixed sizes using SLI, Slerp, and mixup, and using SLI-CP and *Slerp*-CP, type:**
 
 ```
+
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python interpolate_sli_slerp_mixup.py
 
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python interpolate_slicp_slerpcp.py
@@ -18,6 +19,7 @@ These two interpolation files assumes that you have pre-trained PixelVAE paramet
 **To train a ResNet-110 on CIFAR-10 as a baseline, and then obtain predictions with it on the CIFAR-10 test set:**
 
 ```
+
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_baseline_model.py
 
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_baseline_model.py
@@ -27,6 +29,7 @@ CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_baseline_model.py
 **To train a ResNet-110 on CIFAR-10 using a pre-created mixed label augmentation set, and then obtain predictions with it on the CIFAR-10 test set:**
 
 ```
+
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_fixed_augmentations_model.py
 
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_fixed_augmentations_model.py
@@ -36,6 +39,7 @@ CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_fixed_augmentations
 **To train a ResNet-110 on CIFAR-10 using mixup, , and then obtain predictions with it on the CIFAR-10 test set:**
 
 ```
+
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_mixup_model.py
 
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_mixup_model.py
