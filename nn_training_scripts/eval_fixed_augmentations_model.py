@@ -1,11 +1,15 @@
-# This file evaluates Neural Network predictions, given a set of trained weights. 
-# It saves these predictions in logit form.
-# This script is based on Markus Kangsepp's implementation.
-# The lines which need to be edited from experiment to experiment have been outlined below. 
-# This is for the experiment in which 4,500 Latent Blended pairs were created with SLI, mean
-# latent codes, Beta(0.2,0.2) weighting, and a single mixed image per pair of parent images.
+# This file evaluates ResNet-110 predictions, given a set of pre-trained weights. This is
+# used to evaluate neural networks trained on fixed-size augmentation sets that are created
+# prior to training.
+
+# The file saves the neural network predictions in logit form.
+# This script is based on Markus Kangsepp's implementation: https://github.com/markus93/NN_calibration
 # The ResNet model is originally from:
 # https://github.com/BIGBALLON/cifar-10-cnn/blob/master/4_Residual_Network/ResNet_keras.py
+
+# The lines which need to be edited from experiment to experiment have been outlined below. 
+# The current settings are for the experiment in which 4,500 Latent Blended pairs were created with SLI, mean
+# latent codes, Beta(0.2,0.2) weighting, and a single mixed image per pair of parent images.
 
 import keras
 import numpy as np
@@ -25,12 +29,11 @@ from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath("utility") ) ) )
 from utility.evaluation import evaluate_model
 
-
-stack_n            = 18            
-num_classes10      = 10
-num_classes100     = 100
-img_rows, img_cols = 32, 32
-img_channels       = 3
+# Constants 
+stack_n            = 18 # How many residual blocks     
+num_classes        = 10 # Number of classes in the image dataset
+img_rows, img_cols = 32, 32 # Adjust image dimensions as needed
+img_channels       = 3 # Similarly for image channels
 batch_size         = 128
 epochs             = 200
 
@@ -88,7 +91,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
             block = add([intput,conv_2])
         return block
 
-    # total layers = stack_n * 3 * 2 + 2
+    # Total layers = stack_n * 3 * 2 + 2
     # stack_n = 5 by default, total layers = 32
     # Input dimensions: 32x32x3 
     # Output dimensions: 32x32x16
@@ -133,7 +136,7 @@ if __name__ == '__main__':
     y_test = keras.utils.to_categorical(y_test, num_classes10)
     
     # Load in the augmentation set for the experiment being run.
-    # The filename should be adjusted appropriately based on the experiment.
+    # The file name should be adjusted appropriately based on the experiment.
     x_train_additions = np.load('x_augmentation_array.npy')
     y_train_additions = np.load('y_augmentation_array.npy')
 
@@ -150,14 +153,14 @@ if __name__ == '__main__':
     x_train45 = np.concatenate((x_train45, x_train_additions),axis=0)
     y_train45 = np.concatenate((y_train45, y_train_additions),axis=0)
     
-    # Pre-process colors, as specified in the paper
-    img_mean = x_train45.mean(axis=0)  # per-pixel mean
+    # Pre-process colors as specified in the paper
+    img_mean = x_train45.mean(axis=0)  
     img_std = x_train45.std(axis=0)
     x_train45 = (x_train45-img_mean)/img_std
     x_val = (x_val-img_mean)/img_std
     x_test = (x_test-img_mean)/img_std
     
-    # Assemble the neural network. Adjust line 166 to include appropriate filename.
+    # Assemble the neural network. Adjust line 166 to the appropriate filename.
     img_input = Input(shape=(img_rows,img_cols,img_channels))
     output    = residual_network(img_input,num_classes10,stack_n)
     model    = Model(img_input, output)    
