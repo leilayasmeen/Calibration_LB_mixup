@@ -46,7 +46,8 @@ from sklearn.model_selection import train_test_split
 DATASET = 'cifar10' # Can be adjusted to run on MNIST (change to 'mnist_256')
 SETTINGS = '32px_cifar' # If working with MNIST, change to 'mnist_256'
 
-OUT_DIR = DATASET + '_interpolations_filter_3'
+# Adjust this to match your desired output directory
+OUT_DIR = DATASET + '_interpolations_filter_3' 
 
 if not os.path.isdir(OUT_DIR):
    os.makedirs(OUT_DIR)
