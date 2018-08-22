@@ -78,7 +78,7 @@ url={https://github.com/leilayasmeen/Calibration_LB_mixup},
 **Requirements**
 
 * Python version 2.7
-* Tensorflow version 1.5, 1.7, or 1.8
+* Tensorflow version 1.7 or 1.8
 
 **Acknowledgements**
 
