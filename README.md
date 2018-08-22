@@ -21,7 +21,7 @@ CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_baseline_model.py
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_baseline_model.py
 ```
 
-**To train a ResNet-110 on CIFAR-10 using a pre-created mixed label augmentation set, and then obtain predictions with it on the CIFAR-10 test set:**
+**Similary for ResNet-110's trained on an extra pre-created mixed-label augmentation set:**
 
 ```
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_fixed_augmentations_model.py
@@ -29,7 +29,7 @@ CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_fixed_augmentation
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python eval_fixed_augmentations_model.py
 ```
 
-**To train a ResNet-110 on CIFAR-10 using mixup, , and then obtain predictions with it on the CIFAR-10 test set:**
+**Finally, to train and get predictions for a ResNet-110 using *mixup*:**
 
 ```
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python train_mixup_model.py
