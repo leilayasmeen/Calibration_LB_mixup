@@ -1,5 +1,4 @@
 ## About this repository
-
 This repository contains the code needed to run the experiments in "The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation".
 
 ## Creating mixed examples with different types of interpolations
@@ -10,7 +9,6 @@ CUDA_VISIBLE_DEVICES = <devices you wish to use> python interpolate_sli_slerp_mi
 
 CUDA_VISIBLE_DEVICES = <devices you wish to use> python interpolate_slicp_slerpcp.py
 ```
-
 These two interpolation files assumes that you have pre-trained PixelVAE parameters in the same directory, and it operates on CIFAR-10 by default. The dataset, as well as number and type of interpolations, can be adjusted using the commented lines within the code.
 
 ## Training ResNet-110's 
