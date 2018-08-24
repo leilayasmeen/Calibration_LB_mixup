@@ -1,4 +1,4 @@
-## About this repository
+## README: About this repository
 This repository contains the code needed to run the experiments in "The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation".
 
 ## Creating mixed examples with different types of interpolations
