@@ -390,15 +390,13 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             x_train_set, x_dev_set, y_train_set, y_dev_set = train_test_split(x_train_set, y_train_set, test_size=0.1, random_state=seed)
             
             all_latents = np.zeros((1,LATENT_DIM_2)).astype('float32') 
-            x_train_set_sub = x_train_set
-            y_train_set_sub = y_train_set
-            x_train_set_sub = x_train_set_sub.reshape(-1, N_CHANNELS, HEIGHT, WIDTH)
-            y_train_set_sub = y_train_set_sub.reshape(-1, 1)
+            x_train_set = x_train_set.reshape(-1, N_CHANNELS, HEIGHT, WIDTH)
+            y_train_set = y_train_set.reshape(-1, 1)
          
             # Encode all images
             print "Encoding images"
-            for j in range(x_train_set_sub.shape[0]):
-               latestlatents = enc_fn(x_train_set_sub[j,:].reshape(1, N_CHANNELS, HEIGHT, WIDTH))
+            for j in range(x_train_set.shape[0]):
+               latestlatents = enc_fn(x_train_set[j,:].reshape(1, N_CHANNELS, HEIGHT, WIDTH))
                latestlatents = latestlatents.reshape(-1,LATENT_DIM_2)
                all_latents = np.concatenate((all_latents, latestlatents), axis=0)
         
@@ -408,7 +406,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             print "Finding class means"
             classmeans = np.zeros((NUM_CLASSES, LATENT_DIM_2)).astype('float32')
             for k in range(NUM_CLASSES):
-               idk = np.asarray(np.where(np.equal(y_train_set_sub,k))[0])
+               idk = np.asarray(np.where(np.equal(y_train_set,k))[0])
                all_latents_groupk = all_latents[idk,:]
                classmeans[k,:] = np.mean(all_latents_groupk, axis=0)
       
