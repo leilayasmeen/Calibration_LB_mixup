@@ -54,14 +54,11 @@ def residual_network(img_input,classes_num=10,stack_n=5):
         bn_1   = BatchNormalization()(conv_1)
         relu1  = Activation('relu')(bn_1)
         conv_2 = Conv2D(out_channel,kernel_size=(3,3),
-                        strides=(1,1),padding='same',
-                        kernel_initializer="he_normal",
+                        strides=(1,1),padding='same', kernel_initializer="he_normal",
                         kernel_regularizer=regularizers.l2(weight_decay))(relu1)
         if increase:
             projection = Conv2D(out_channel,
-                                kernel_size=(1,1),
-                                strides=(2,2),
-                                padding='same',
+                                kernel_size=(1,1), strides=(2,2), padding='same',
                                 kernel_initializer="he_normal",
                                 kernel_regularizer=regularizers.l2(weight_decay))(intput)
             block = add([conv_2, projection])
@@ -74,8 +71,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
     # Input dimensions: 32x32x3 
     # Output dimensions: 32x32x16
     x = Conv2D(filters=16,kernel_size=(3,3),
-               strides=(1,1),padding='same',
-               kernel_initializer="he_normal",
+               strides=(1,1),padding='same', kernel_initializer="he_normal",
                kernel_regularizer=regularizers.l2(weight_decay))(img_input)
 
     # Input dimensions: 32x32x16
@@ -111,10 +107,8 @@ if __name__ == '__main__':
     y_test = keras.utils.to_categorical(y_test, num_classes10)
     
     # Split into training, validation, and test sets
-    x_train45, x_val, y_train45, y_val = train_test_split(x_train,
-                                                          y_train, 
-                                                          test_size=0.1,
-                                                          random_state=seed) 
+    x_train45, x_val, y_train45, y_val = train_test_split(x_train, y_train, 
+                                                          test_size=0.1, random_state=seed) 
     
     # Pre-process colors as described in the paper
     img_mean = x_train45.mean(axis=0)  
@@ -130,8 +124,7 @@ if __name__ == '__main__':
     print(resnet.summary())
 
     # Set the optimizer and momentum
-    sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True, 
-                         clipnorm=1.)
+    sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True, clipnorm=1.)
     resnet.compile(loss='categorical_crossentropy', 
                    optimizer=sgd, metrics=['accuracy'])
 
@@ -157,10 +150,8 @@ if __name__ == '__main__':
 
     # Commence the training process
     hist = resnet.fit_generator(generator=training_generator,
-                         steps_per_epoch=iterations,
-                         epochs=epochs,
-                         callbacks=cbks,
-                         validation_data=(x_val, y_val))
+                         steps_per_epoch=iterations, epochs=epochs,
+                         callbacks=cbks, validation_data=(x_val, y_val))
     
     # Save model weights when training finishes.
     resnet.save('resnet_110_45kclip_mixup.h5')
