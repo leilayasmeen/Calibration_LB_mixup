@@ -358,7 +358,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
       
     # CREATE MIXED EXAMPLES
 
-    if MODE == 'one_level':
+    if MODE == 'one_level': # Other options - those for multiple-level PixelVAEs - have been pruned, as we did not use them in our paper
 
         ch_sym = tf.placeholder(tf.int32, shape=None)
         y_sym = tf.placeholder(tf.int32, shape=None)
