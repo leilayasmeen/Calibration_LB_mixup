@@ -45,21 +45,17 @@ def residual_network(img_input,classes_num=10,stack_n=5):
         pre_relu = Activation('relu')(pre_bn)
 
         conv_1 = Conv2D(out_channel,kernel_size=(3,3),
-                        strides=stride,padding='same',
-                        kernel_initializer="he_normal",
+                        strides=stride,padding='same', kernel_initializer="he_normal",
                         kernel_regularizer=regularizers.l2(weight_decay))(pre_relu)
         bn_1   = BatchNormalization()(conv_1)
         relu1  = Activation('relu')(bn_1)
         conv_2 = Conv2D(out_channel,kernel_size=(3,3),
-                        strides=(1,1),padding='same',
-                        kernel_initializer="he_normal",
+                        strides=(1,1),padding='same', kernel_initializer="he_normal",
                         kernel_regularizer=regularizers.l2(weight_decay))(relu1)
         if increase:
             projection = Conv2D(out_channel,
-                                kernel_size=(1,1),
-                                strides=(2,2),
-                                padding='same',
-                                kernel_initializer="he_normal",
+                                kernel_size=(1,1), strides=(2,2),
+                                padding='same', kernel_initializer="he_normal",
                                 kernel_regularizer=regularizers.l2(weight_decay))(intput)
             block = add([conv_2, projection])
         else:
@@ -95,8 +91,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
     x = Activation('relu')(x)
     x = GlobalAveragePooling2D()(x)
 
-    x = Dense(classes_num,activation='softmax',
-              kernel_initializer="he_normal",
+    x = Dense(classes_num,activation='softmax', kernel_initializer="he_normal",
               kernel_regularizer=regularizers.l2(weight_decay))(x)
     return x
 
@@ -108,8 +103,7 @@ if __name__ == '__main__':
     
     # Split the data into training, validation, and test sets
     # The random seed ensures that every discriminator uses the same split
-    x_train45, x_val, y_train45, y_val = train_test_split(x_train, 
-                                                          y_train, 
+    x_train45, x_val, y_train45, y_val = train_test_split(x_train, y_train, 
                                                           test_size=0.1, 
                                                           random_state=seed) 
     
@@ -126,10 +120,8 @@ if __name__ == '__main__':
     resnet    = Model(img_input, output)
     print(resnet.summary())
 
-    # Set the optimizer and momentum, specify gradient 
-    # clipping value with the clipnorm option to ensure stability
-    sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True, 
-                         clipnorm=1.)
+    # Set the optimizer and momentum, specify gradient clipping value with the clipnorm option to ensure stability
+    sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True, clipnorm=1.)
     resnet.compile(loss='categorical_crossentropy', optimizer=sgd, 
                    metrics=['accuracy'])
 
