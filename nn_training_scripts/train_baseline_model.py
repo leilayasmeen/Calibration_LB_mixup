@@ -137,12 +137,9 @@ if __name__ == '__main__':
     datagen.fit(x_train45)
 
     # Commence training
-    hist = resnet.fit_generator(datagen.flow(x_train45, y_train45,
-                                             batch_size=batch_size),
-                         steps_per_epoch=iterations,
-                         epochs=epochs,
-                         callbacks=cbks,
-                         validation_data=(x_val, y_val))
+    hist = resnet.fit_generator(datagen.flow(x_train45, y_train45, batch_size=batch_size),
+                         steps_per_epoch=iterations, epochs=epochs,
+                         callbacks=cbks, validation_data=(x_val, y_val))
     
     # Save the model weights once training finishes
     resnet.save('resnet_110_45kclip.h5')
