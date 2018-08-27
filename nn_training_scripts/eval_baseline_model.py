@@ -1,6 +1,5 @@
 # This file obtains predictions (and saves them in logit form) for the baseline ResNet-110.
-# It is based off a script implemented by Markus Kangsepp: 
-# The ResNet model was originally obtained from: https://github.com/BIGBALLON/cifar-10-cnn/blob/master/4_Residual_Network/ResNet_keras.py
+# It is based off a script implemented by Markus Kangsepp: https://github.com/markus93/NN_calibration
 
 import keras
 import numpy as np
