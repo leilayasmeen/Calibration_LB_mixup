@@ -14,7 +14,7 @@ By Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga,
 Francesco Visin, David Vazquez, Aaron Courville
 """
 
-# Import all the libraries needed
+# Import all required libraries
 import os, sys
 sys.path.append(os.getcwd())
 import numpy as np
@@ -38,7 +38,7 @@ import tflib.ops.linear
 import tflib.ops.batchnorm
 import tflib.ops.embedding
 
-# Adjust these to run interpolations on another dataset (e.g., 'mnist_256')
+# Adjust these parameters to run interpolations on another dataset (e.g., 'mnist_256')
 DATASET = 'cifar10' 
 SETTINGS = '32px_cifar' 
 
@@ -49,7 +49,7 @@ if not os.path.isdir(OUT_DIR):
    os.makedirs(OUT_DIR)
    print "Created directory {}".format(OUT_DIR)
 
-# We have pruned other dataset options from this code; they are available in the Github repo
+# We have pruned other dataset options "elif..." from this code; they are available for reference in the version of this file which is in the Github repository
 if SETTINGS=='32px_cifar':
 
     # Import dataset
@@ -177,7 +177,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     raise Exception('invalid resample value')
 
                 if output_dim==input_dim and resample==None:
-                    shortcut = inputs # Identity skip-connection
+                    shortcut = inputs # Performs ResNet identity mapping
                 else:
                     shortcut = conv_shortcut(name+'.Shortcut', input_dim=input_dim, output_dim=output_dim, filter_size=1, mask_type=mask_type, he_init=False, biases=True, inputs=inputs)
 
@@ -204,7 +204,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             def EncFull(images):
                 output = images
 
-                if WIDTH == 32: #64 
+                if WIDTH == 32: # Adjust this line, as well as output_dim in the lines below, for datasets with different-sized images
                     if EMBED_INPUTS:
                         output = lib.ops.conv2d.Conv2D('EncFull.Input', input_dim=N_CHANNELS*DIM_EMBED, output_dim=DIM_0, filter_size=1, inputs=output, he_init=False)
                     else:
@@ -246,7 +246,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             def DecFull(latents, images):
                 output = tf.clip_by_value(latents, -50., 50.)
 
-                if WIDTH == 32: # Adjust this line, as well as output_dim in the lines below, for datasets with different-sized images.
+                if WIDTH == 32: # Adjust this line, as well as output_dim in the lines below, for datasets with different-sized images
                     output = lib.ops.linear.Linear('DecFull.Input', input_dim=LATENT_DIM_2, output_dim=2*2*DIM_4, initialization='glorot', inputs=output)
                     output = tf.reshape(output, [-1, DIM_4, 2, 2])
                     output = ResidualBlock('DecFull.Res2', input_dim=DIM_4, output_dim=DIM_4, filter_size=3, resample=None, he_init=True, inputs=output)
@@ -356,7 +356,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
         tf.concat([tf.expand_dims(x, 0) for x in tower_cost], axis=0), 0
     )
       
-    # Create mixed examples
+    # CREATE MIXED EXAMPLES
 
     if MODE == 'one_level':
 
@@ -381,8 +381,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             x_augmentation_set_slerp = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH)) 
             y_augmentation_set_slerp = np.zeros((1, 1, NUM_CLASSES))
             
-            # Create arrays to save mixed examples created using output-space interpolations (relevant only for the experiments
-            # in which output-space interpolations were applied prior to training, instead of during every training batch).
+            # Create arrays to save mixed examples created using output-space interpolations (relevant only for the experiments in which output-space interpolations were applied prior to training, instead of during every training batch).
             x_augmentation_set_mixup = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH)) 
             y_augmentation_set_mixup = np.zeros((1, 1, NUM_CLASSES))
 
@@ -397,8 +396,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     img[j*h:j*h+h, i*w:i*w+w, :] = x
                 imsave(OUT_DIR + '/' + save_path, img)
                 
-            numsamples = 1125 # This line controls how many images will be generated. A single iteration produces 
-                              # blended images from every pair of classes in the dataset.
+            numsamples = 1125 # This line controls how many images will be generated. A single iteration produces blended images from every pair of classes in the dataset.
                
             x_train_set_array = np.array(x_train_set)
             y_train_set_array = np.array(y_train_set)  
@@ -452,14 +450,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     label1 = np_utils.to_categorical(label1, NUM_CLASSES) 
                     label2 = np_utils.to_categorical(label2, NUM_CLASSES) 
                
-                    # Lambda values to use for the specific weighting scheme. We use "p" instead of lambda here
-                    # in the code, unlike the paper, as it is shorter.
+                    # Lambda values to use for the specific weighting scheme. We use "p" instead of lambda here in the code, unlike the paper, as it is shorter.
                      
                     # This option is for constant lambda in {0.2, 0.4, 0.6, 0.8}
                     pvals = np.linspace(0.2, 0.8, num=4) 
                   
-                    # This option is for Beta distributed lambda. Adjust the alpha values (first two parameters in the expression below)
-                    # and number of samples to draw (third parameter in the expression below) based on the desired interpolation scheme.
+                    # This option is for Beta distributed lambda. Adjust the alpha values (first two parameters in the expression below)and number of samples to draw (third parameter in the expression below) based on the desired interpolation scheme.
                     # pvals = np.random.beta(0.2, 0.2, 4) 
                     
                     # Find angle between the two latent codes (to use for Spherical linear interpolation)
@@ -472,12 +468,12 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                     # Mix the latent codes
                     for p in pvals:
                       
-                      # Interpolation 1: Simple linear interpolation (SLI)
+                      # MIXED EXAMPLES USING SIMPLE LATENT-SPACE LINEAR INTERPOLATION (SLI)
                       new_code_sli = np.multiply(p,image_code1) + np.multiply((1-p),image_code2)
                       new_label_sli = np.multiply(p,label1) + np.multiply((1-p),label2)
                       new_label_sli = new_label_sli.reshape(1,1,NUM_CLASSES)
 
-                      sample_sli = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH), dtype='int32')
+                      sample_sli = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH), dtype='int32') # Placeholder array
 
                       # Generate SLI sample
                       for y in xrange(HEIGHT):
@@ -496,7 +492,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                                                                                                 class2,
                                                                                                 p,
                                                                                                 imagenum))
-                      # Interpolation 3: Spherical linear interpolation (Slerp)
+                      # MIXED EXAMPLES USING SPHERICAL LATENT-SPACE LINEAR INTERPOLATION (SLERP)
                       if so == 0:
                         new_code_slerp = (1.0-p) * image_code1 + p * image_code2
                       else:
@@ -505,7 +501,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                       new_label_slerp = np.multiply(p,label1) + np.multiply((1-p),label2)
                       new_label_slerp = new_label_slerp.reshape(1,1,NUM_CLASSES)
 
-                      sample_slerp = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH),dtype='int32')
+                      sample_slerp = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH),dtype='int32') # Placeholder array
 
                       # Generate Slerp sample
                       for y in xrange(HEIGHT):
@@ -523,11 +519,11 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
                                                                                                   class2,
                                                                                                   p,
                                                                                                   imagenum))
-                      # Output-space interpolations 
+                      # MIXED EXAMPLES USING LINEAR PIXEL-SPACE INTERPOLATION 
                       new_label_mixup = np.multiply(p,label1) + np.multiply((1-p),label2)
                       new_label_mixup = new_label_mixup.reshape(1,1,NUM_CLASSES)
 
-                      sample_mixup = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH),dtype='int32')
+                      sample_mixup = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH),dtype='int32') # Placeholder array
 
                       # Generate output-space blended example
                       for y in xrange(HEIGHT):
@@ -567,7 +563,6 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as session:
             np.save(OUT_DIR + '/' + 'y_augmentation_array_mixup', y_augmentation_array_mixup) 
                       
     # Run the session
-
     if MODE == 'one_level':
         prints=[
             ('alpha', alpha), 
