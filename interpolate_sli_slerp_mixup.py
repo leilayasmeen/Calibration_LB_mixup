@@ -9,7 +9,11 @@ dataset are indicated.
 When using a different set of parameters or PixelVAE architecture, set the 
 sampling_loop file in the tflib folder to run on your desired parameters.
 
-This code is adapted from "PixelVAE: A Latent Variable Model for Natural Images"
+This code is adapted from: https://github.com/igul222/PixelVAE
+
+The PixelVAE was initially published in:
+
+PixelVAE: A Latent Variable Model for Natural Images
 By Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga,
 Francesco Visin, David Vazquez, Aaron Courville
 """
