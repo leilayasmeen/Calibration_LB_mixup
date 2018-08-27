@@ -6,8 +6,6 @@
 # latent codes, Beta(0.2,0.2) weighting, and a single mixed image per pair of parent images.
 
 # It is based off a script implemented by Markus Kangsepp: https://github.com/markus93/NN_calibration
-# The ResNet model is from:
-# https://github.com/BIGBALLON/cifar-10-cnn/blob/master/4_Residual_Network/ResNet_keras.py
 
 import keras
 import numpy as np
@@ -65,11 +63,8 @@ def residual_network(img_input,classes_num=10,stack_n=5):
                         kernel_initializer="he_normal",
                         kernel_regularizer=regularizers.l2(weight_decay))(relu1)
         if increase:
-            projection = Conv2D(out_channel,
-                                kernel_size=(1,1),
-                                strides=(2,2),
-                                padding='same',
-                                kernel_initializer="he_normal",
+            projection = Conv2D(out_channel, kernel_size=(1,1), strides=(2,2),
+                                padding='same', kernel_initializer="he_normal",
                                 kernel_regularizer=regularizers.l2(weight_decay))(intput)
             block = add([conv_2, projection])
         else:
@@ -81,8 +76,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
     # Input dimensions: 32x32x3 
     # Output dimensions: 32x32x16
     x = Conv2D(filters=16,kernel_size=(3,3),
-               strides=(1,1),padding='same',
-               kernel_initializer="he_normal",
+               strides=(1,1),padding='same', kernel_initializer="he_normal",
                kernel_regularizer=regularizers.l2(weight_decay))(img_input)
 
     # Input dimensions: 32x32x16
@@ -106,8 +100,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
     x = Activation('relu')(x)
     x = GlobalAveragePooling2D()(x)
 
-    x = Dense(classes_num,activation='softmax',
-              kernel_initializer="he_normal",
+    x = Dense(classes_num,activation='softmax', kernel_initializer="he_normal",
               kernel_regularizer=regularizers.l2(weight_decay))(x)
     return x
 
