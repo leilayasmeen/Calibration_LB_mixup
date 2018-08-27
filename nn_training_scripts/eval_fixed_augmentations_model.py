@@ -79,10 +79,8 @@ def residual_network(img_input,classes_num=10,stack_n=5):
                         kernel_regularizer=regularizers.l2(weight_decay))(relu1)
         if increase:
             projection = Conv2D(out_channel,
-                                kernel_size=(1,1),
-                                strides=(2,2),
-                                padding='same',
-                                kernel_initializer="he_normal",
+                                kernel_size=(1,1), strides=(2,2),
+                                padding='same', kernel_initializer="he_normal",
                                 kernel_regularizer=regularizers.l2(weight_decay))(intput)
             block = add([conv_2, projection])
         else:
@@ -94,8 +92,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
     # Input dimensions: 32x32x3 
     # Output dimensions: 32x32x16
     x = Conv2D(filters=16,kernel_size=(3,3),
-               strides=(1,1),padding='same',
-               kernel_initializer="he_normal",
+               strides=(1,1),padding='same', kernel_initializer="he_normal",
                kernel_regularizer=regularizers.l2(weight_decay))(img_input)
 
     # Input dimensions: 32x32x16
@@ -119,8 +116,7 @@ def residual_network(img_input,classes_num=10,stack_n=5):
     x = Activation('relu')(x)
     x = GlobalAveragePooling2D()(x)
 
-    x = Dense(classes_num,activation='softmax',
-              kernel_initializer="he_normal",
+    x = Dense(classes_num,activation='softmax', kernel_initializer="he_normal",
               kernel_regularizer=regularizers.l2(weight_decay))(x)
     return x
 
@@ -139,10 +135,8 @@ if __name__ == '__main__':
     y_train_additions = np.load('y_augmentation_array.npy')
 
     # Split the CIFAR-10 dataset into training, validation, and test sets
-    x_train45, x_val, y_train45, y_val = train_test_split(x_train, 
-                                                          y_train, 
-                                                          test_size=0.1, 
-                                                          random_state=seed)  
+    x_train45, x_val, y_train45, y_val = train_test_split(x_train, y_train, 
+                                                          test_size=0.1, random_state=seed)  
     
     # Add the augmentation set to the training set
     x_train_additions = x_train_additions.transpose(0,2,3,1)
