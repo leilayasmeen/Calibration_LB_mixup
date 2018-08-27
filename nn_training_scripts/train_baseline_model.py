@@ -104,8 +104,7 @@ if __name__ == '__main__':
     # Split the data into training, validation, and test sets
     # The random seed ensures that every discriminator uses the same split
     x_train45, x_val, y_train45, y_val = train_test_split(x_train, y_train, 
-                                                          test_size=0.1, 
-                                                          random_state=seed) 
+                                                          test_size=0.1, random_state=seed) 
     
     # Pre-process colors, as specified in the paper
     img_mean = x_train45.mean(axis=0)  # per-pixel mean
@@ -138,8 +137,7 @@ if __name__ == '__main__':
     datagen.fit(x_train45)
 
     # Commence training
-    hist = resnet.fit_generator(datagen.flow(x_train45, 
-                                             y_train45,
+    hist = resnet.fit_generator(datagen.flow(x_train45, y_train45,
                                              batch_size=batch_size),
                          steps_per_epoch=iterations,
                          epochs=epochs,
