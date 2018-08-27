@@ -1,8 +1,8 @@
 # This file evaluates ResNet-110 predictions, given a set of pre-trained weights. This is
 # used to evaluate neural networks trained on fixed-size augmentation sets that are created
 # prior to training.
-
 # The file saves the neural network predictions in logit form.
+
 # The lines which need to be edited from experiment to experiment have been outlined below. 
 # The current settings are for the experiment in which 4,500 Latent Blended pairs were created with SLI, 
 # mean latent codes, Beta(0.2,0.2) weighting, and a single mixed image per pair of parent images.
