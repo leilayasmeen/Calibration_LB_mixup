@@ -1,9 +1,5 @@
-# This file obtains predictions (and saves them in logit form)
-# for the ResNet-110 trained with mixup (specifically, the experiments 
-# in which output-space mixed examples were created in every training batch)
+# This file obtains predictions, and saves them as logits, for the baseline ResNet-110
 # It is based off a script implemented by Markus Kangsepp: https://github.com/markus93/NN_calibration
-# It draws on: https://raw.githubusercontent.com/yu4u/mixup-generator/master/mixup_generator.py
-# The ResNet model is obtained from: https://github.com/BIGBALLON/cifar-10-cnn/blob/master/4_Residual_Network/ResNet_keras.py
 
 import keras
 import numpy as np
