@@ -42,9 +42,7 @@ CUDA_VISIBLE_DEVICES = <gpus> python eval_baseline_model.py
 **To train a PixelVAE using the architecture described in the paper, type:**
 
 ```
-
 CUDA_VISIBLE_DEVICES = <gpus> python train_pixelvae.py
-
 ```
 
 This file trains a 3-pixel receptive field PixelCNN on CIFAR-10 by default. The lines which need to be adjusted in order to train a PixelVAE on a different dataset, or with a different architecture, have been indicated with comments.
