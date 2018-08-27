@@ -13,15 +13,7 @@ These two interpolation files assume that you have pre-trained PixelVAE paramete
 
 ## Training ResNet-110's 
 
-**To train a baseline ResNet-110 on CIFAR-10, and then obtain predictions with it on the CIFAR-10 test set:**
-
-```
-CUDA_VISIBLE_DEVICES = <gpus> python train_baseline_model.py
-
-CUDA_VISIBLE_DEVICES = <gpus> python eval_baseline_model.py
-```
-
-**For ResNet-110's that you wish to train using a pre-created mixed-label augmentation set:**
+**To train and get test-set predictions for a ResNet-110 using a pre-created mixed-label augmentation set:**
 
 ```
 CUDA_VISIBLE_DEVICES = <gpus> python train_fixed_augmentations_model.py
@@ -29,14 +21,22 @@ CUDA_VISIBLE_DEVICES = <gpus> python train_fixed_augmentations_model.py
 CUDA_VISIBLE_DEVICES = <gpus> python eval_fixed_augmentations_model.py
 ```
 
-**Finally, to train and get predictions for a ResNet-110 trained using *mixup*:**
+**To train and get test-set predictions for a ResNet-110 with pixel-space interpolations (*mixup*) applied in every training batch:**
 
 ```
 CUDA_VISIBLE_DEVICES = <gpus> python train_mixup_model.py
 
 CUDA_VISIBLE_DEVICES = <gpus> python eval_mixup_model.py
 ```
-The *mixup* files above draw on *mixup_generator.py* to generate mixed examples within every training batch. The file *mixup_generator.py* was adjusted based on the implementation by [yu4u](https://github.com/yu4u/mixup-generator). All six files above should to be adjusted to run on the weights for the ResNet-110(s) of interest. Comments in the code indicate where adjustments need to be made.
+The *mixup* files above draw on *mixup_generator.py* to generate mixed examples within each training batch. The file *mixup_generator.py* was adjusted based on the implementation by [yu4u](https://github.com/yu4u/mixup-generator). All six files above should to be adjusted to run on the weights for the ResNet-110(s) of interest. Comments in the code indicate where adjustments need to be made.
+
+**To train and get test-set predictions for a baseline ResNet-110:**
+
+```
+CUDA_VISIBLE_DEVICES = <gpus> python train_baseline_model.py
+
+CUDA_VISIBLE_DEVICES = <gpus> python eval_baseline_model.py
+```
 
 ## Training a PixelVAE for *Latent Blending*
 **To train a PixelVAE using the architecture described in the paper, type:**
@@ -72,7 +72,7 @@ author={Leila Islam}, url={https://github.com/leilayasmeen/Calibration_LB_mixup}
 }
 ```
 
-**Requirements**: Python version 2.7 and Tensorflow version 1.7 or 1.8
+**Requirements**: Python; Tensorflow; Keras
 
 **Acknowledgements**
 
