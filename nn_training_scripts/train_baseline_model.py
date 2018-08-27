@@ -1,4 +1,4 @@
-# This file obtains predictions, and saves them as logits, for the baseline ResNet-110
+# This file trains the baseline ResNet-110 described in our paper.
 # It is based off a script implemented by Markus Kangsepp: https://github.com/markus93/NN_calibration
 
 import keras
