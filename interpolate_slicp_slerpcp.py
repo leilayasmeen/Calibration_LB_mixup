@@ -10,7 +10,11 @@ When using a different set of parameters or PixelVAE architecture,
 change the sampling_loop file to the one 
 which is tailored to run on your desired set of parameters.
 
-This code is adapted from: PixelVAE: A Latent Variable Model for Natural Images
+This code is adapted from: https://github.com/igul222/PixelVAE
+
+The PixelVAE was initially published in: 
+
+PixelVAE: A Latent Variable Model for Natural Images
 Ishaan Gulrajani, Kundan Kumar, Faruk Ahmed, Adrien Ali Taiga, 
 Francesco Visin, David Vazquez, Aaron Courville
 """
@@ -45,7 +49,7 @@ of our code. Our Github repository contains the full version of this file.
             from keras.utils import np_utils
             import itertools
             
-            # Create arrays which will hold mixed examples and their labels (separate arrays for SLI-CP and Slerp-CP)
+            # Create placeholer arrays which will hold mixed examples and their labels (separate arrays for SLI-CP and Slerp-CP)
             x_augmentation_set_slicp = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH)) 
             y_augmentation_set_slicp = np.zeros((1, 1, NUM_CLASSES))
             x_augmentation_set_slerpcp = np.zeros((1, N_CHANNELS, HEIGHT, WIDTH)) 
@@ -102,9 +106,7 @@ of our code. Our Github repository contains the full version of this file.
                   # Find the L2 distance between theclass means
                   meandist[m] = np.linalg.norm(a-b)
             
-            # Sort the distances between pairs and find the smallest distance. We have included code to interpolate between
-            # just the two closest classes. However, it is easy to extend this to more pairs (e.g., 3, as done in the final paper)
-            # by taking the later values of sorteddistances, as shown below in the lines that are commented out.
+            # Sort the distances between pairs and find the smallest distance. We have included code to interpolate between just the two closest classes. However, it is easy to extend this to more pairs (e.g., 3, as done in the final paper) by taking the later values of 'sorteddistances'. The commented-out lines below indicate how this could be done.
             sorteddistances = np.sort(meandist)
             closestdistance = sorteddistances[0]
             #secondclosestdistance = sorteddistances[1]
@@ -200,8 +202,7 @@ of our code. Our Github repository contains the full version of this file.
                # This option is for constant lambda in {0.2, 0.4, 0.6, 0.8}
                pvals = np.linspace(0.2, 0.8, num=4) 
                   
-               # This option is for Beta distributed lambda. Adjust the alpha values (first two parameters in the expression below)
-               # and number of samples to draw (third parameter in the expression below) based on the desired interpolation scheme.
+               # This option is for Beta distributed lambda. Adjust the alpha values (first two parameters in the expression below) and number of samples to draw (third parameter in the expression below) based on the desired interpolation scheme.
                # pvals = np.random.beta(0.2, 0.2, 4) 
                     
                # Find angle between the two latent codes (to use for Spherical linear interpolation)
@@ -214,7 +215,7 @@ of our code. Our Github repository contains the full version of this file.
                # Combine the latent codes
                for p in pvals:
                       
-                  # Interpolation 2: Simple linear interpolation between the three most closely related classes (SLI-CP)
+                  # SIMPLE LATENT-SPACE LINEAR INTERPOLATION BETWEEN CLOSELY-RELATED CLASS PAIRS (SLI-CP)
                   new_code_slicp = np.multiply(p,image_code1) + np.multiply((1-p),image_code2)
                   new_label_slicp = np.multiply(p,label1) + np.multiply((1-p),label2)
                   new_label_slicp = new_label_slicp.reshape(1,1,NUM_CLASSES)
@@ -240,7 +241,7 @@ of our code. Our Github repository contains the full version of this file.
                                                                                               p,
                                                                                               imagenum))
 
-                  # Interpolation 4: Spherical linear interpolation between closely related classes (Slerp-CP)
+                  # SPHERICAL LATENT-SPACE INTERPOLATION BETWEEN CLOSELY-RELATED CLASS PAIRS (SLERP-CP)
                   if so == 0:
                      new_code_slerpcp = (1.0-p) * image_code1 + p * image_code2
                   else:
@@ -283,9 +284,8 @@ of our code. Our Github repository contains the full version of this file.
             np.save(OUT_DIR + '/' + 'x_augmentation_array_slerpcp', x_augmentation_array_slerpcp)
             np.save(OUT_DIR + '/' + 'y_augmentation_array_slerpcp', y_augmentation_array_slerpcp)   
                       
-    # Run the session
-
-    if MODE == 'one_level':
+    # Run 
+    if MODE == 'one_level': # As before, other options have been pruned from this code, as we did not use multi-level PixelVAE's for our final analyses
         prints=[
             ('alpha', alpha), 
             ('reconst', reconst_cost), 
