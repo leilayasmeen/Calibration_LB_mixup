@@ -60,11 +60,13 @@ These two files, and the backup files they draw on (contained in the utility fol
 
 ## Experiments
 
-**The "Experiments" folder contains additional files used to run the specific fixed-size augmentation set experiments whose results were presented in our paper. They are divided into two categories:**
+**The "Experiments" folder contains the working version of the files used to run the specific experiments whose results were presented in our paper. They are divided into two categories:**
 
 - The files in the "Interpolations" sub-folder were used to create fixed-size augmentation sets that were appended to the original training set prior to training
 
-- The files in the "Neural Networks" sub-folder were used to train neural networks using each of these pre-created augmentation sets
+- The files in the "Neural Networks" sub-folder were used to train neural networks using each of these pre-created augmentation sets, and using mixed examples that were created during training
+
+*Please note that these files have not been fully cleaned, as we have already provided organized and commented versions of the code needed to run each analysis from the paper in this repository. The fully cleaned versions are the ones that are described above. However, we have included these additional files in case readers want additional reference materials on the experiments described in the dissertation.*
 
 **Citation**
 
