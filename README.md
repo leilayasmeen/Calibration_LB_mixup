@@ -1,5 +1,5 @@
 ## README: About this repository
-This repository contains the code needed to run the experiments in "The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation".
+This repository contains the code needed to conduct the analyses described in "The Uncertainty in Uncertainty: Improving Neural Network Calibration with Mixed-Label Data Augmentation".
 
 ## Creating mixed examples with different types of interpolations
 **To create mixed-label augmentation sets of fixed sizes using SLI, *Slerp*, and *mixup*, SLI-CP, *Slerp*-CP, type:**
@@ -58,6 +58,14 @@ python reliability.py
 ```
 These two files, and the backup files they draw on (contained in the utility folder), were obtained from [markus93](https://github.com/markus93/NN_calibration) and adjusted as needed for this paper. They calculate ECE, MCE, error, and cross-entropy loss given the logit vectors for a set of neural networks. Thus, each neural network of interest must be evaluated using the appropriate "evaluation" file prior to running these two files.
 
+## Experiments
+
+**The "Experiments" folder contains additional files used to run the specific fixed-size augmentation set experiments whose results were presented in our paper. They are divided into two categories:**
+
+- The files in the "Interpolations" sub-folder were used to create fixed-size augmentation sets that were appended to the original training set prior to training
+
+- The files in the "Neural Networks" sub-folder were used to train neural networks using each of these pre-created augmentation sets
+
 **Citation**
 
 If you use our methododology or code, please cite it using:
@@ -65,7 +73,7 @@ If you use our methododology or code, please cite it using:
 ```
 @misc{
 leila2018nncalibrationmixedlabels,
-title={The Uncertainty in Uncertainty: Confidence Calibration in Neural Networks with Mixed-Label Data Augmentation},
+title={The Uncertainty in Uncertainty: Improving Neural Network Calibration with Mixed-Label Data Augmentation},
 author={Leila Islam}, url={https://github.com/leilayasmeen/Calibration_LB_mixup},
 }
 ```
@@ -74,6 +82,6 @@ author={Leila Islam}, url={https://github.com/leilayasmeen/Calibration_LB_mixup}
 
 **Acknowledgements**
 
-The *mixup* implementation is adapted from [yu4u](https://github.com/yu4u/mixup-generator); the PixelVAE training code is adapted from [igul222](https://github.com/igul222/PixelVAE); and the neural network training, evaluation, and calibration scripts from [markus93](https://github.com/markus93/NN_calibration).
+The *mixup* implementation (the experiments in which pixel-space interpolations were applied in every training batch) is adapted from [yu4u](https://github.com/yu4u/mixup-generator); the PixelVAE training code is adapted from [igul222](https://github.com/igul222/PixelVAE); and the neural network training, evaluation, and calibration scripts from [markus93](https://github.com/markus93/NN_calibration).
 
 
