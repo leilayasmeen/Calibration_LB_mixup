@@ -1,5 +1,5 @@
 
-# This file was obtained from Markus Kangsepp's open-source Github repository, and then adjusted for the purposes of this paper.
+# This file was obtained from Markus Kangsepp's open-source Github repository (https://github.com/markus93/NN_calibration), and then adjusted for the purposes of this paper.
 
 from matplotlib import pyplot as plt
 import numpy as np
