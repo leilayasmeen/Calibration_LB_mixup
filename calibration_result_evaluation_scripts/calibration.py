@@ -1,5 +1,5 @@
 
-# This code was obtained from Markus Kangsepp's Github repository and adjusted for this paper.
+# This code was obtained from Markus Kangsepp's Github repository (https://github.com/markus93/NN_calibration) and adjusted for this paper
 
 import numpy as np
 import pandas as pd
